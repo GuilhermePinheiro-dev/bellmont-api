@@ -1,0 +1,66 @@
+import { prisma } from "../lib/prisma";
+import { ProductFilters } from "../types";
+
+export const getProducts = async (filter: ProductFilters) => {
+  const {
+    page = 1,
+    limit = 10,
+    category,
+    priceMin,
+    priceMax,
+    search,
+    sortBy,
+    sortOrder,
+  } = filter;
+
+  const parsedPage = Number(page);
+  const parsedLimit = Number(limit);
+  const parsedPriceMin = priceMin !== undefined ? Number(priceMin) : undefined;
+  const parsedPriceMax = priceMax !== undefined ? Number(priceMax) : undefined;
+
+  const where: any = {};
+
+  if (category) {
+    where.name = { contains: category, mode: "insensitive" };
+  }
+
+  if (parsedPriceMin !== undefined && !Number.isNaN(parsedPriceMin)) {
+    where.price = { ...where.price, gte: parsedPriceMin };
+  }
+
+  if (parsedPriceMax !== undefined && !Number.isNaN(parsedPriceMax)) {
+    where.price = { ...where.price, lte: parsedPriceMax };
+  }
+
+  if (search) {
+    where.OR = [
+      { name: { contains: search, mode: "insensitive" } },
+      { description: { contains: search, mode: "insensitive" } },
+    ];
+  }
+
+  const sortOrderValue = sortOrder?.toLowerCase() === "desc" ? "desc" : "asc";
+  const sortByMap: Record<string, "price" | "name" | "createdAt"> = {
+    price: "price",
+    name: "name",
+    createdAt: "createdAt",
+    created_at: "createdAt",
+  };
+  const normalizedSortBy = sortBy ? sortByMap[sortBy] : undefined;
+
+  const orderBy = normalizedSortBy
+    ? { [normalizedSortBy]: sortOrderValue }
+    : undefined;
+
+  const result = await prisma.product.findMany({
+    where,
+    orderBy,
+    skip:
+      parsedPage > 0
+        ? (parsedPage - 1) * (parsedLimit > 0 ? parsedLimit : 10)
+        : 0,
+    take: parsedLimit > 0 ? parsedLimit : 10,
+  });
+
+  return result;
+};
