@@ -8,3 +8,17 @@ export interface ProductFilters {
     sortBy?: 'price' | 'name' | 'createdAt';
     sortOrder?: 'asc' | 'desc';
 }
+
+export interface AuthRequest {
+    email: string,
+    password: string
+}
+
+export interface RegisterRequest extends AuthRequest{
+    firstName: string,
+    lastName: string,
+    cpf?: string,
+    dateofBirth?: string,
+    phone?: string,
+    role?: "USER" | "ADMIN"
+}
