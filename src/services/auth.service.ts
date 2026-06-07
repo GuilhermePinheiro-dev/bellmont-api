@@ -17,8 +17,9 @@ export const registerUser = async (payload: RegisterRequest) => {
       email: payload.email,
       password: payload.password,
       cpf: payload.cpf,
-      dateofBirth: payload.dateofBirth || undefined,
+      birthdate: payload.birthDate ? new Date(payload.birthDate) : undefined,
       phone: payload.phone,
+      role: "USER",
     },
   });
 

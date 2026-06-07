@@ -1,24 +1,24 @@
 export interface ProductFilters {
-    page?: number;
-    limit?: number;
-    category?: string;
-    priceMin?: number;
-    priceMax?: number;
-    search?: string;
-    sortBy?: 'price' | 'name' | 'createdAt';
-    sortOrder?: 'asc' | 'desc';
+  page?: number;
+  limit?: number;
+  category?: string;
+  priceMin?: number;
+  priceMax?: number;
+  search?: string;
+  sortBy?: "price" | "name" | "createdAt";
+  sortOrder?: "asc" | "desc";
 }
 
 export interface AuthRequest {
-    email: string,
-    password: string
+  email: string;
+  password: string;
 }
 
-export interface RegisterRequest extends AuthRequest{
-    firstName: string,
-    lastName: string,
-    cpf?: string,
-    dateofBirth?: string,
-    phone?: string,
-    role?: "USER" | "ADMIN"
+export interface RegisterRequest extends AuthRequest {
+  firstName: string;
+  lastName: string;
+  cpf?: string;
+  birthDate?: string;
+  phone?: string;
+  role?: "USER" | "ADMIN";
 }
