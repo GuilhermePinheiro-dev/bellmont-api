@@ -1,5 +1,5 @@
 import { prisma } from "../lib/prisma";
-import { RegisterRequest } from "../types";
+import { AuthRequest, RegisterRequest } from "../types";
 import bcrypt from "bcrypt"
 
 export const registerUser = async (payload: RegisterRequest) => {
@@ -28,3 +28,22 @@ export const registerUser = async (payload: RegisterRequest) => {
 
   return newUser;
 };
+
+
+export const loginUser = async (data: AuthRequest) => {
+  const user = await prisma.user.findUnique({
+    where: { email: data.email}
+  })
+
+  if(!user){
+    throw new Error("Credenciais inválidas.")
+  }
+
+  const isValidPassword = await bcrypt.compare(data.password, user.password)
+
+  if(!isValidPassword){
+    throw new Error("Senha inválida.")
+  }
+
+  return user
+}
