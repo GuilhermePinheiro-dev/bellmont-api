@@ -1,12 +1,14 @@
-import Fastify from "fastify";
+import Fastify, { FastifyError } from "fastify";
 import "dotenv/config";
 import cors from "@fastify/cors";
 import helmet from "@fastify/helmet";
 import productRoutes from "./routes/products.routes";
 import swagger from "@fastify/swagger";
 import scalar from "@scalar/fastify-api-reference";
-import jwt from "@fastify/jwt"
+import jwt from "@fastify/jwt";
 import authRoutes from "./routes/auth.routes";
+import z, { ZodError } from "zod";
+import { errorHandler } from "./middlewares/error.middleware";
 
 const PORT = parseInt(process.env.PORT ?? "3000");
 
@@ -15,8 +17,8 @@ const fastify = Fastify({
 });
 
 fastify.register(jwt, {
-  secret: process.env.JWT_SECRET!
-})
+  secret: process.env.JWT_SECRET!,
+});
 
 fastify.register(cors, {
   credentials: true,
@@ -57,9 +59,9 @@ fastify.register(swagger, {
 fastify.register(scalar, {
   routePrefix: "/api-docs",
   configuration: {
-    theme: "dark"
-  }
-})
+    theme: "dark",
+  },
+});
 
 fastify.register(productRoutes, { prefix: "/products" });
 fastify.register(authRoutes, { prefix: "/auth" });
@@ -74,6 +76,8 @@ fastify.get("/health", async (request, reply) => {
     timeStamp: Date().toString(),
   };
 });
+
+fastify.setErrorHandler(errorHandler);
 
 fastify.listen({ port: PORT }, function (err, address) {
   if (err) {
