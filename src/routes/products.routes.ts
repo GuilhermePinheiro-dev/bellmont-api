@@ -1,7 +1,7 @@
 import { FastifyInstance } from "fastify";
-import { listProducts } from "../controllers/products.controller";
+import { getProduct, listProducts } from "../controllers/products.controller";
 import { authenticate } from "../middlewares/auth.middlewares";
-
+  
 export default async function productRoutes(fastify: FastifyInstance) {
   fastify.addHook("onRequest", authenticate);
   fastify.get(
@@ -23,8 +23,87 @@ export default async function productRoutes(fastify: FastifyInstance) {
             sortOrder: { type: "string", enum: ["asc", "desc"] },
           },
         },
+        response: {
+          200: {
+            description: "Lista de produtos",
+            type: "array",
+            items: {
+              type: "object",
+              properties: {
+                id: { type: "number" },
+                name: { type: "string" },
+                slug: { type: "string" },
+                description: { type: "string" },
+                price: { type: "number" },
+                stock: { type: "number" },
+                images: { type: "array", items: { type: "string", format: "url" } },
+                sizes: { type: ["array", "object", "null"] },
+                active: { type: "boolean" },
+                createdAt: { type: "string", format: "date-time" },
+                updatedAt: { type: "string", format: "date-time" },
+              },
+            },
+          },
+          400: {
+            description: "Requisição inválida",
+            type: "object",
+            properties: { message: { type: "string" } },
+          },
+          401: {
+            description: "Não autorizado",
+            type: "object",
+            properties: { message: { type: "string" } },
+          },
+        },
       },
     },
     listProducts,
+  );
+
+  fastify.get(
+    "/:id",
+    {
+      schema: {
+        tags: ["Products"],
+        description: "Obter um produto pelo ID",
+        params: {
+          type: "object",
+          properties: {
+            id: { type: "number" },
+          },
+          required: ["id"],
+        },
+        response: {
+          200: {
+            description: "Produto encontrado",
+            type: "object",
+            properties: {
+              id: { type: "number" },
+              name: { type: "string" },
+              slug: { type: "string" },
+              description: { type: "string" },
+              price: { type: "number" },
+              stock: { type: "number" },
+              images: { type: "array", items: { type: "string", format: "url" } },
+              sizes: { type: ["array", "object", "null"] },
+              active: { type: "boolean" },
+              createdAt: { type: "string", format: "date-time" },
+              updatedAt: { type: "string", format: "date-time" },
+            },
+          },
+          400: {
+            description: "Requisição inválida",
+            type: "object",
+            properties: { message: { type: "string" } },
+          },
+          401: {
+            description: "Não autorizado",
+            type: "object",
+            properties: { message: { type: "string" } },
+          },
+        },
+      },
+    },
+    getProduct,
   );
 }
