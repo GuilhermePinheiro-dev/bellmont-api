@@ -1,5 +1,5 @@
 import { prisma } from "../lib/prisma";
-import { ProductFilters } from "../types";
+import { CreateProduct, ProductFilters } from "../types";
 
 export const getProducts = async (filter: ProductFilters) => {
   const {
@@ -70,9 +70,27 @@ export const getProductsById = async (id: number) => {
     where: { id },
   });
 
-  if(!product){
+  if (!product) {
     throw new Error("Product não encontrado");
   }
 
   return product;
+};
+
+export const saveProduct = async (data: CreateProduct) => {
+  const existingProduct =  await prisma.product.findUnique({
+    where: {
+      slug: data.slug
+    }
+  })
+
+  if(existingProduct){
+    throw new Error("Slug já existe. Escolha outro nome para o produto")
+  }
+
+  const newProduct = await prisma.product.create({
+    data,
+  });
+
+  return newProduct;
 };

@@ -1,7 +1,11 @@
 import { FastifyInstance } from "fastify";
-import { getProduct, listProducts } from "../controllers/products.controller";
+import {
+  createNewProduct,
+  getProduct,
+  listProducts,
+} from "../controllers/products.controller";
 import { authenticate } from "../middlewares/auth.middlewares";
-  
+
 export default async function productRoutes(fastify: FastifyInstance) {
   fastify.addHook("onRequest", authenticate);
   fastify.get(
@@ -32,12 +36,17 @@ export default async function productRoutes(fastify: FastifyInstance) {
               properties: {
                 id: { type: "number" },
                 name: { type: "string" },
-                slug: { type: "string" },
                 description: { type: "string" },
                 price: { type: "number" },
                 stock: { type: "number" },
-                images: { type: "array", items: { type: "string", format: "url" } },
-                sizes: { type: ["array", "object", "null"] },
+                images: {
+                  type: "array",
+                  items: { type: "string" },
+                },
+                sizes: {
+                  type: "array",
+                  items: { type: "string" },
+                },
                 active: { type: "boolean" },
                 createdAt: { type: "string", format: "date-time" },
                 updatedAt: { type: "string", format: "date-time" },
@@ -84,8 +93,14 @@ export default async function productRoutes(fastify: FastifyInstance) {
               description: { type: "string" },
               price: { type: "number" },
               stock: { type: "number" },
-              images: { type: "array", items: { type: "string", format: "url" } },
-              sizes: { type: ["array", "object", "null"] },
+              images: {
+                type: "array",
+                items: { type: "string" },
+              },
+              sizes: {
+                type: "array",
+                items: { type: "string" },
+              },
               active: { type: "boolean" },
               createdAt: { type: "string", format: "date-time" },
               updatedAt: { type: "string", format: "date-time" },
@@ -105,5 +120,35 @@ export default async function productRoutes(fastify: FastifyInstance) {
       },
     },
     getProduct,
+  );
+  fastify.post(
+    "/",
+    {
+      schema: {
+        tags: ["Products"],
+        description: "Criar um novo produto",
+        required: ["name", "description", "price", "slug", "active", "stock"],
+        body: {
+          type: "object",
+          properties: {
+            name: { type: "string" },
+            description: { type: "string" },
+            price: { type: "number" },
+            stock: { type: "number" },
+            active: { type: "boolean" },
+            colors: { type: "array", items: { type: "string" } },
+            images: {
+              type: "array",
+              items: { type: "string" },
+            },
+            sizes: {
+              type: "array",
+              items: { type: "string" },
+            },
+          },
+        },
+      },
+    },
+    createNewProduct,
   );
 }
