@@ -33,7 +33,8 @@ model Product {
   description String?
   price       Decimal  @db.Decimal(10, 2)
   stock       Int      @default(0)
-  images      String[]
+  colors      Json?
+  images      Json?
   sizes       Json?
   active      Boolean  @default(true)
   createdAt   DateTime @default(now())
