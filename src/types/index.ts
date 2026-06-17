@@ -43,3 +43,7 @@ export interface UpdateProduct extends Partial<CreateProduct> {
   stock?: number;
   active?: boolean;
 }
+
+export interface DeleteProduct {
+  id: number
+}

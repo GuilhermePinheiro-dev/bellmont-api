@@ -72,7 +72,7 @@ export const getProductsById = async (id: number) => {
   });
 
   if (!product) {
-    throw new Error("Product não encontrado");
+    throw new Error("Producto não encontrado");
   }
 
   return product;
@@ -120,5 +120,20 @@ export const updateProduct = async (id: number, data: UpdateProduct) => {
     data,
   });
 
-  return updateProduct
+  return updateProduct;
+};
+
+export const deleteProduct = async (id: number) => {
+  const product = await prisma.product.findUnique({
+    where: { id },
+  });
+
+  if (!product) {
+    throw new Error("Producto não encontrado");
+  }
+
+  await prisma.product.delete({
+    where: { id },
+  });
+
 };
