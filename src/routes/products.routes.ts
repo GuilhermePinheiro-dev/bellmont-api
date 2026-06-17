@@ -3,6 +3,7 @@ import {
   createNewProduct,
   getProduct,
   listProducts,
+  updateExistingProduct,
 } from "../controllers/products.controller";
 import { authenticate } from "../middlewares/auth.middlewares";
 
@@ -127,7 +128,63 @@ export default async function productRoutes(fastify: FastifyInstance) {
       schema: {
         tags: ["Products"],
         description: "Criar um novo produto",
-        required: ["name", "description", "price", "slug", "active", "stock"],
+        body: {
+          type: "object",
+          required: ["name", "description", "price", "active", "stock"],
+          properties: {
+            name: { type: "string" },
+            description: { type: "string" },
+            price: { type: "number" },
+            stock: { type: "number" },
+            active: { type: "boolean" },
+            colors: { type: "array", items: { type: "string" } },
+            images: {
+              type: "array",
+              items: { type: "string" },
+            },
+            sizes: {
+              type: "array",
+              items: { type: "string" },
+            },
+          },
+        },
+        response: {
+          201: {
+            description: "Produto criado com sucesso",
+            type: "object",
+            properties: {
+              message: { type: "string" },
+            },
+          },
+          400: {
+            description: "Requisição inválida",
+            type: "object",
+            properties: { message: { type: "string" } },
+          },
+          401: {
+            description: "Não autorizado",
+            type: "object",
+            properties: { message: { type: "string" } },
+          },
+        },
+      },
+    },
+    createNewProduct,
+  );
+
+  fastify.put(
+    "/:id",
+    {
+      schema: {
+        tags: ["Products"],
+        description: "Atualiza um produto existente",
+        params: {
+          type: "object",
+          properties: {
+            id: { type: "number" },
+          },
+          required: ["id"],
+        },
         body: {
           type: "object",
           properties: {
@@ -147,8 +204,47 @@ export default async function productRoutes(fastify: FastifyInstance) {
             },
           },
         },
+        response: {
+          200: {
+            description: "Produto atualizado com sucesso",
+            type: "object",
+            properties: {
+              id: { type: "number" },
+              name: { type: "string" },
+              slug: { type: "string" },
+              description: { type: "string" },
+              price: { type: "number" },
+              stock: { type: "number" },
+              colors: {
+                type: "array",
+                items: { type: "string" },
+              },
+              images: {
+                type: "array",
+                items: { type: "string" },
+              },
+              sizes: {
+                type: "array",
+                items: { type: "string" },
+              },
+              active: { type: "boolean" },
+              createdAt: { type: "string", format: "date-time" },
+              updatedAt: { type: "string", format: "date-time" },
+            },
+          },
+          400: {
+            description: "Requisição inválida",
+            type: "object",
+            properties: { message: { type: "string" } },
+          },
+          401: {
+            description: "Não autorizado",
+            type: "object",
+            properties: { message: { type: "string" } },
+          },
+        },
       },
     },
-    createNewProduct,
+    updateExistingProduct,
   );
 }

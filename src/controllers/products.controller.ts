@@ -3,11 +3,15 @@ import {
   getProducts,
   getProductsById,
   saveProduct,
+  updateProduct,
 } from "../services/products.service";
-import { createProductSchema, productFiltersSchema } from "../utils/validators";
-import { CreateProduct, ProductFilters } from "../types";
+import {
+  createProductSchema,
+  productFiltersSchema,
+  updateProductSchema,
+} from "../utils/validators";
+import { CreateProduct, ProductFilters, UpdateProduct } from "../types";
 import slugify from "slugify";
-import { pt } from "zod/v4/locales";
 
 export const listProducts = async (
   request: FastifyRequest<{ Querystring: unknown }>,
@@ -28,19 +32,44 @@ export const getProduct = async (
 };
 
 export const createNewProduct = async (
-  request: FastifyRequest<{Body: CreateProduct}>,
+  request: FastifyRequest<{ Body: CreateProduct }>,
   reply: FastifyReply,
 ) => {
   const body = request.body;
   body.slug = slugify(body.name, {
     lower: true,
     strict: true,
-    locale: "pt"
-  })
+    locale: "pt",
+  });
 
   const validate = createProductSchema.parse(body);
 
   await saveProduct(validate);
 
   reply.status(201).send({ message: "Produto criado com sucesso!!" });
+};
+
+export const updateExistingProduct = async (
+  request: FastifyRequest<{
+    Params: { id: string };
+    Body: Partial<UpdateProduct>;
+  }>,
+  reply: FastifyReply,
+) => {
+  const id = Number(request.params.id);
+  const body = request.body;
+
+  const validate = updateProductSchema.parse(body);
+
+  if (validate.name) {
+    validate.slug = slugify(validate.name, {
+      lower: true,
+      strict: true,
+      locale: "pt",
+    });
+  }
+
+  const product = await updateProduct(id, validate);
+
+  reply.status(200).send(product);
 };

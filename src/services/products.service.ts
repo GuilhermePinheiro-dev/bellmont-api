@@ -1,5 +1,6 @@
+import { sl } from "zod/v4/locales";
 import { prisma } from "../lib/prisma";
-import { CreateProduct, ProductFilters } from "../types";
+import { CreateProduct, ProductFilters, UpdateProduct } from "../types";
 
 export const getProducts = async (filter: ProductFilters) => {
   const {
@@ -78,14 +79,14 @@ export const getProductsById = async (id: number) => {
 };
 
 export const saveProduct = async (data: CreateProduct) => {
-  const existingProduct =  await prisma.product.findUnique({
+  const existingProduct = await prisma.product.findUnique({
     where: {
-      slug: data.slug
-    }
-  })
+      slug: data.slug,
+    },
+  });
 
-  if(existingProduct){
-    throw new Error("Slug já existe. Escolha outro nome para o produto")
+  if (existingProduct) {
+    throw new Error("Slug já existe. Escolha outro nome para o produto");
   }
 
   const newProduct = await prisma.product.create({
@@ -93,4 +94,31 @@ export const saveProduct = async (data: CreateProduct) => {
   });
 
   return newProduct;
+};
+
+export const updateProduct = async (id: number, data: UpdateProduct) => {
+  const existingProduct = await prisma.product.findUnique({
+    where: { id },
+  });
+
+  if (!existingProduct) {
+    throw new Error("Erro! Produto não encontrado");
+  }
+
+  if (data.slug) {
+    const slugExists = await prisma.product.findUnique({
+      where: { slug: data.slug },
+    });
+
+    if (slugExists && slugExists.id !== id) {
+      throw new Error("Slug já existe. Escolha outro nome para o produto");
+    }
+  }
+
+  const updateProduct = await prisma.product.update({
+    where: { id },
+    data,
+  });
+
+  return updateProduct
 };
