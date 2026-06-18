@@ -69,6 +69,9 @@ export const getProducts = async (filter: ProductFilters) => {
 export const getProductsById = async (id: number) => {
   const product = await prisma.product.findUnique({
     where: { id },
+    include: {
+      category: true,
+    },
   });
 
   if (!product) {
