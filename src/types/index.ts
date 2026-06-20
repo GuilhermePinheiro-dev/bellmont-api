@@ -1,7 +1,7 @@
 export interface ProductFilters {
   page?: number;
   limit?: number;
-  category?: string;
+  categoryId?: number;
   priceMin?: number;
   priceMax?: number;
   search?: string;
@@ -33,6 +33,7 @@ export interface CreateProduct {
   stock: number;
   active: boolean;
   images?: string[];
+  categoryId?: number;
 }
 
 export interface UpdateProduct extends Partial<CreateProduct> {
@@ -45,5 +46,21 @@ export interface UpdateProduct extends Partial<CreateProduct> {
 }
 
 export interface DeleteProduct {
-  id: number
+  id: number;
+}
+
+export interface CreateCategory {
+  name: string;
+  slug: string;
+  active?: boolean;
+}
+
+export interface UpdateCategory extends Partial<CreateCategory> {
+  name?: string;
+  slug?: string;
+  active?: boolean;
+}
+
+export interface DeleteCategory {
+  id: number;
 }

@@ -6,7 +6,7 @@ export const getProducts = async (filter: ProductFilters) => {
   const {
     page = 1,
     limit = 10,
-    category,
+    categoryId,
     priceMin,
     priceMax,
     search,
@@ -21,8 +21,8 @@ export const getProducts = async (filter: ProductFilters) => {
 
   const where: any = {};
 
-  if (category) {
-    where.name = { contains: category, mode: "insensitive" };
+  if (categoryId !== undefined) {
+    where.categoryId = categoryId;
   }
 
   if (parsedPriceMin !== undefined && !Number.isNaN(parsedPriceMin)) {
@@ -138,5 +138,4 @@ export const deleteProduct = async (id: number) => {
   await prisma.product.delete({
     where: { id },
   });
-
 };

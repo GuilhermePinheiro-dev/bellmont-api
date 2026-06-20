@@ -21,7 +21,7 @@ export default async function productRoutes(fastify: FastifyInstance) {
           properties: {
             page: { type: "integer", minimum: 1 },
             limit: { type: "integer", minimum: 1 },
-            category: { type: "string" },
+            categoryId: { type: "integer", minimum: 1 },
             priceMin: { type: "number", minimum: 0 },
             priceMax: { type: "number", minimum: 0 },
             search: { type: "string" },
@@ -154,13 +154,6 @@ export default async function productRoutes(fastify: FastifyInstance) {
             price: { type: "number" },
             stock: { type: "number" },
             categoryId: { type: "number" },
-            category: {
-              type: "object",
-              properties: {
-                id: { type: "number" },
-                name: { type: "string" },
-              },
-            },
             active: { type: "boolean" },
             colors: { type: "array", items: { type: "string" } },
             images: {

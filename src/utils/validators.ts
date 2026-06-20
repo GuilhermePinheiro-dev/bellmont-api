@@ -33,7 +33,6 @@ export const productFiltersSchema = z
     limit: z
       .preprocess((value) => parseNumber(value), z.number().int().positive())
       .optional(),
-    category: z.string().min(1, "Categoria inválida").optional(),
     categoryId: z
       .preprocess((value) => parseNumber(value), z.number().int().positive())
       .optional(),
@@ -68,6 +67,22 @@ export const createProductSchema = z.object({
   stock: z.number().int().nonnegative("Estoque deve ser positivo"),
   active: z.boolean(),
   images: z.array(z.string()).optional(),
+  category: z.string().min(1, "Categoria inválida").optional(),
+  categoryId: z
+    .preprocess((value) => parseNumber(value), z.number().int().positive())
+    .optional(),
+});
+
+export const createCategorySchema = z.object({
+  name: z.string().min(1, "Nome é obrigatório"),
+  slug: z.string().min(1, "Slug é obrigatório"),
+  active: z.boolean().optional(),
+});
+
+export const updateCategorySchema = z.object({
+  name: z.string().min(1, "Nome é obrigatório").optional(),
+  slug: z.string().min(1, "Slug é obrigatório").optional(),
+  active: z.boolean().optional(),
 });
 
 export const updateProductSchema = z.object({
@@ -91,5 +106,9 @@ export const deleteProductSchema = z.object({
 });
 
 export const categoryIdSchema = z.object({
+  id: z.number().int().min(1, "ID inválido"),
+});
+
+export const deleteCategorySchema = z.object({
   id: z.number().int().min(1, "ID inválido"),
 });
