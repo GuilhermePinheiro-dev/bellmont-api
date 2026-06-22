@@ -38,8 +38,9 @@ Use these instructions when contributing to this repository. Follow them as hard
 
 - Validate request data in controllers using Zod schemas from `src/utils/validators.ts` or a nearby domain-specific validator.
 - Keep request validation close to the controller boundary, not in the route.
-- Generate slugs automatically with `slugify` when a name is used to identify a product or similar resource.
-- Use soft delete semantics when the domain supports it. For products, prefer `active: false` over physical deletion unless a hard delete is explicitly required.
+- Generate slugs automatically with `slugify` when a name is used to identify a product, category, or similar resource.
+- Use soft delete semantics when the domain supports it. For products and categories, prefer `active: false` over physical deletion unless a hard delete is explicitly required.
+- When a category is deactivated, keep linked products consistent by deactivating them through `categoryId`.
 - Preserve Portuguese user-facing messages and error text.
 - Preserve the current naming style used in the repo, even when it is mixed English/Portuguese, unless a task explicitly asks for a cleanup.
 - Prefer explicit checks and readable guards over clever abstractions.
@@ -65,10 +66,12 @@ Use these instructions when contributing to this repository. Follow them as hard
 - The current Prisma schema is intentionally small and should be treated as the source of truth.
 - `User` currently includes `firstName`, `lastName`, `email`, `password`, `cpf`, `phone`, `birthdate`, `createdAt`, `updatedAt`, and `role`.
 - `Product` currently includes `name`, `slug`, `description`, `price`, `stock`, `colors`, `images`, `sizes`, `active`, `createdAt`, and `updatedAt`.
+- `Category` currently includes `name`, `slug`, `active`, `products`, `createdAt`, and `updatedAt`.
 - `Role` is an enum with `USER` and `ADMIN`.
 - `colors`, `images`, and `sizes` are Json fields and must be treated as array-like structured data in the application layer.
 - `slug` is unique and must be checked before create or update.
 - `active` controls logical availability and should be used for deactivation flows.
+- Product filtering should use `categoryId` instead of text-based category matching.
 - If a schema change is needed, update Prisma schema, migration, seed logic, generated client expectations, and any affected validators together.
 
 ## Validation and Data Handling
@@ -114,11 +117,13 @@ Use these instructions when contributing to this repository. Follow them as hard
 ## Common Project-Specific Problems and Fixes
 
 - If a product slug collides, stop in the service layer and return a clear error before writing to the database.
+- If a category slug collides, stop in the service layer and return a clear error before writing to the database.
 - If a route accepts strings for numeric fields, coerce them before validation or before service logic.
 - If JWT requests fail, check that the middleware is registered and that `JWT_SECRET` exists in the environment.
 - If Swagger and the controller disagree, fix the route schema first and then align validation.
 - If Prisma types appear stale, regenerate the client before changing application code further.
 - If product data should be hidden, prefer filtering by `active` rather than deleting records outright.
+- If products need to be grouped or filtered by category, use `categoryId` directly.
 - If a change spans auth, routes, and Prisma, update all three layers in one pass to avoid half-finished behavior.
 
 ## Implementation Preferences
