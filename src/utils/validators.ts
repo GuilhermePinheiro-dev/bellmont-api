@@ -112,3 +112,86 @@ export const categoryIdSchema = z.object({
 export const deleteCategorySchema = z.object({
   id: z.number().int().min(1, "ID inválido"),
 });
+export const createOrderSchema = z.object({
+  items: z
+    .array(
+      z.object({
+        productId: z.preprocess(
+          (value) => parseNumber(value),
+          z.number().int().positive("Produto inválido"),
+        ),
+        quantity: z.preprocess(
+          (value) => parseNumber(value),
+          z.number().int().positive("Quantidade deve ser maior que zero"),
+        ),
+      }),
+    )
+    .min(1, "Pedido deve ter ao menos um item"),
+  shippingAddress: z.object({
+    cep: z
+      .string()
+      .regex(/^\d{8}$/, "CEP deve conter 8 dígitos"),
+    street: z.string().min(1, "Rua/Avenida é obrigatória"),
+    number: z.string().min(1, "Número é obrigatório"),
+    complement: z.string().optional(),
+    neighborhood: z.string().min(1, "Bairro é obrigatório"),
+    city: z.string().min(1, "Cidade é obrigatória"),
+    state: z
+      .string()
+      .length(2, "Estado deve conter a UF com 2 caracteres"),
+    country: z.string().default("BR"),
+  }),
+  shipping: z
+    .preprocess((value) => parseNumber(value), z.number().nonnegative())
+    .optional(),
+  discount: z
+    .preprocess((value) => parseNumber(value), z.number().nonnegative())
+    .optional(),
+});
+
+export const orderIdSchema = z.object({
+  id: z.number().int().min(1, "ID inválido"),
+});
+
+export const updateOrderStatusSchema = z.object({
+  status: z.enum(["PENDING", "PAID", "SHIPPED", "DELIVERED", "CANCELED"], {
+    message: "Status do pedido inválido",
+  }),
+});
+
+export const orderFiltersSchema = z.object({
+  page: z
+    .preprocess((value) => parseNumber(value), z.number().int().positive())
+    .optional(),
+  limit: z
+    .preprocess((value) => parseNumber(value), z.number().int().positive())
+    .optional(),
+  status: z
+    .enum(["PENDING", "PAID", "SHIPPED", "DELIVERED", "CANCELED"], {
+      message: "Status do pedido inválido",
+    })
+    .optional(),
+  paymentStatus: z
+    .enum(["PENDING", "PAID", "FAILED", "REFUNDED"], {
+      message: "Status de pagamento inválido",
+    })
+    .optional(),
+  totalMin: z
+    .preprocess((value) => parseNumber(value), z.number().nonnegative())
+    .optional(),
+  totalMax: z
+    .preprocess((value) => parseNumber(value), z.number().nonnegative())
+    .optional(),
+  sortBy: z.enum(["total", "createdAt", "status"]).optional(),
+  sortOrder: z.enum(["asc", "desc"]).optional(),
+})
+.refine(
+  (data) =>
+    data.totalMin === undefined ||
+    data.totalMax === undefined ||
+    data.totalMin <= data.totalMax,
+  {
+    message: "totalMin deve ser menor ou igual a totalMax",
+    path: ["totalMin"],
+  },
+);

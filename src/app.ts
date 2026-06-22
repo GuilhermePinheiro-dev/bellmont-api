@@ -8,7 +8,7 @@ import swagger from "@fastify/swagger";
 import scalar from "@scalar/fastify-api-reference";
 import jwt from "@fastify/jwt";
 import authRoutes from "./routes/auth.routes";
-import z, { ZodError } from "zod";
+import orderRoutes from "./routes/orders.routes";
 import { errorHandler } from "./middlewares/error.middleware";
 
 const PORT = parseInt(process.env.PORT ?? "3000");
@@ -67,6 +67,7 @@ fastify.register(scalar, {
 fastify.register(productRoutes, { prefix: "/products" });
 fastify.register(categoryRoutes, { prefix: "/categories" });
 fastify.register(authRoutes, { prefix: "/auth" });
+fastify.register(orderRoutes, { prefix: "/orders" });
 
 fastify.get("/", function (request, reply) {
   reply.send({ hello: "world" });
