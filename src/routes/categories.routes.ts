@@ -135,7 +135,7 @@ export default async function categoryRoutes(fastify: FastifyInstance) {
     getCategoryByIdController,
   );
 
-  fastify.put<{ Body: UpdateCategory; Params: { id: string } }>(
+  fastify.put<{ Body: Partial<UpdateCategory>; Params: { id: string } }>(
     "/:id",
     {
       onRequest: [requireAdmin],
