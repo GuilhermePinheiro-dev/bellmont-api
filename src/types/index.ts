@@ -55,7 +55,7 @@ export interface CreateCategory {
   active?: boolean;
 }
 
-export interface UpdateCategory extends Partial<CreateCategory> {
+export interface UpdateCategory{
   name?: string;
   slug?: string;
   active?: boolean;
