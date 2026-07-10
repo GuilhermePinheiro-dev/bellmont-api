@@ -1,5 +1,4 @@
 import { FastifyReply, FastifyRequest } from "fastify";
-import slugify from "slugify";
 import {
   deleteCategory,
   getCategory,
@@ -14,6 +13,7 @@ import {
   updateCategorySchema,
 } from "../utils/validators";
 import { CreateCategory, UpdateCategory } from "../types";
+import { generateSlug } from "../utils/slug";
 
 export const listCategories = async (
   request: FastifyRequest,
@@ -43,11 +43,7 @@ export const createNewCategory = async (
 ) => {
   const body = request.body;
 
-  body.slug = slugify(body.name, {
-    lower: true,
-    strict: true,
-    locale: "pt",
-  });
+  body.slug = generateSlug(body.name);
 
   const validate = createCategorySchema.parse(body);
 
@@ -69,11 +65,7 @@ export const updateExistingCategory = async (
   const validate = updateCategorySchema.parse(body);
 
   if (validate.name) {
-    validate.slug = slugify(validate.name, {
-      lower: true,
-      strict: true,
-      locale: "pt",
-    });
+    validate.slug = generateSlug(validate.name);
   }
 
   const category = await updateCategory(id, validate);

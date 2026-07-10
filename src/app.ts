@@ -1,4 +1,4 @@
-import Fastify, { FastifyError } from "fastify";
+import Fastify from "fastify";
 import "dotenv/config";
 import cors from "@fastify/cors";
 import helmet from "@fastify/helmet";
@@ -10,11 +10,27 @@ import jwt from "@fastify/jwt";
 import authRoutes from "./routes/auth.routes";
 import orderRoutes from "./routes/orders.routes";
 import { errorHandler } from "./middlewares/error.middleware";
+import csrf from "@fastify/csrf-protection"
 
 const PORT = parseInt(process.env.PORT ?? "3000");
 
 const fastify = Fastify({
-  logger: true,
+  logger: {
+    level: process.env.LOG_LEVEL || "info",
+    serializers: {
+      req(request) {
+        return {
+          method: request.method,
+          url: request.url,
+        };
+      },
+      res(reply) {
+        return {
+          statusCode: reply.statusCode,
+        };
+      },
+    },
+  },
 });
 
 fastify.register(jwt, {
@@ -29,6 +45,10 @@ fastify.register(cors, {
 fastify.register(helmet, {
   contentSecurityPolicy: false,
 });
+
+fastify.register(csrf, {
+  cookieOpts: { signed: true}
+})
 
 fastify.register(swagger, {
   openapi: {

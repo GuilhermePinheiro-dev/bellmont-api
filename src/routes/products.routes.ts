@@ -203,6 +203,7 @@ export default async function productRoutes(fastify: FastifyInstance) {
       schema: {
         tags: ["Products"],
         description: "Atualiza um produto existente",
+        security: [{ bearerAuth: [] }],
         params: {
           type: "object",
           properties: {

@@ -26,7 +26,9 @@ export const registerUser = async (payload: RegisterRequest) => {
     },
   });
 
-  return newUser;
+  const { password, ...newUserWithoutPassord } = newUser;
+
+  return newUserWithoutPassord;
 };
 
 export const loginUser = async (data: AuthRequest) => {

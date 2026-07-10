@@ -19,6 +19,7 @@ export default async function categoryRoutes(fastify: FastifyInstance) {
       schema: {
         tags: ["Categories"],
         description: "Lista categorias cadastradas",
+        security: [{ bearerAuth: [] }],
         response: {
           200: {
             description: "Lista de categorias",
@@ -58,6 +59,7 @@ export default async function categoryRoutes(fastify: FastifyInstance) {
       schema: {
         tags: ["Categories"],
         description: "Cria uma nova categoria",
+        security: [{ bearerAuth: [] }],
         body: {
           type: "object",
           required: ["name"],
@@ -99,6 +101,7 @@ export default async function categoryRoutes(fastify: FastifyInstance) {
       schema: {
         tags: ["Categories"],
         description: "Obtém uma categoria pelo ID",
+        security: [{ bearerAuth: [] }],
         params: {
           type: "object",
           properties: {
@@ -142,6 +145,7 @@ export default async function categoryRoutes(fastify: FastifyInstance) {
       schema: {
         tags: ["Categories"],
         description: "Atualiza uma categoria existente",
+        security: [{ bearerAuth: [] }],
         params: {
           type: "object",
           properties: {
@@ -192,6 +196,7 @@ export default async function categoryRoutes(fastify: FastifyInstance) {
       schema: {
         tags: ["Categories"],
         description: "Desativa uma categoria existente",
+        security: [{ bearerAuth: [] }],
         params: {
           type: "object",
           properties: {

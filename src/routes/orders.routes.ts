@@ -97,6 +97,7 @@ export default async function orderRoutes(fastify: FastifyInstance) {
       schema: {
         tags: ["Orders"],
         description: "Lista pedidos do usuario autenticado",
+        security: [{ bearerAuth: [] }],
         querystring: {
           type: "object",
           properties: {
@@ -136,6 +137,7 @@ export default async function orderRoutes(fastify: FastifyInstance) {
       schema: {
         tags: ["Orders"],
         description: "Obtem um pedido pelo ID",
+        security: [{ bearerAuth: [] }],
         params: {
           type: "object",
           properties: {
@@ -160,6 +162,7 @@ export default async function orderRoutes(fastify: FastifyInstance) {
       schema: {
         tags: ["Orders"],
         description: "Cria um novo pedido e atualiza o estoque dos produtos",
+        security: [{ bearerAuth: [] }],
         body: {
           type: "object",
           required: ["items", "shippingAddress"],
@@ -197,6 +200,7 @@ export default async function orderRoutes(fastify: FastifyInstance) {
       schema: {
         tags: ["Orders"],
         description: "Atualiza o status de um pedido",
+        security: [{ bearerAuth: [] }],
         params: {
           type: "object",
           properties: {
@@ -231,6 +235,7 @@ export default async function orderRoutes(fastify: FastifyInstance) {
       schema: {
         tags: ["Orders"],
         description: "Cancela um pedido existente sem remover o historico",
+        security: [{ bearerAuth: [] }],
         params: {
           type: "object",
           properties: {
