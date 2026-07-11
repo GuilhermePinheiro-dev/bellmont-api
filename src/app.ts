@@ -13,6 +13,7 @@ import { errorHandler } from "./middlewares/error.middleware";
 import csrf from "@fastify/csrf-protection"
 
 const PORT = parseInt(process.env.PORT ?? "3000");
+const HOST = process.env.HOST ?? "0.0.0.0";
 
 const fastify = Fastify({
   logger: {
@@ -102,7 +103,7 @@ fastify.get("/health", async (request, reply) => {
 
 fastify.setErrorHandler(errorHandler);
 
-fastify.listen({ port: PORT }, function (err, address) {
+fastify.listen({ port: PORT, host: HOST }, function (err, address) {
   if (err) {
     fastify.log.error(err);
     process.exit(1);
