@@ -14,6 +14,7 @@ import csrf from "@fastify/csrf-protection"
 
 const PORT = parseInt(process.env.PORT ?? "3000");
 const HOST = process.env.HOST ?? "0.0.0.0";
+const serverUrl = process.env.RENDER_EXTERNAL_URL || `http://localhost:${PORT}`
 
 const fastify = Fastify({
   logger: {
@@ -61,7 +62,7 @@ fastify.register(swagger, {
     },
     servers: [
       {
-        url: `http://localhost:${PORT}`,
+        url: serverUrl,
         description: "Servidor de desenvolvimento",
       },
     ],
