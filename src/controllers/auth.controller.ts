@@ -31,3 +31,10 @@ export const login = async (
     token,
   });
 };
+
+export const profile = async (
+  request: FastifyRequest,
+  reply: FastifyReply,
+) => {
+  return reply.send((request as any).user);
+};
