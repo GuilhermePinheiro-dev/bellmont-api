@@ -11,6 +11,7 @@ import authRoutes from "./routes/auth.routes";
 import orderRoutes from "./routes/orders.routes";
 import { errorHandler } from "./middlewares/error.middleware";
 import csrf from "@fastify/csrf-protection"
+import fastifyCookie from "@fastify/cookie";
 
 const PORT = parseInt(process.env.PORT ?? "3000");
 const HOST = process.env.HOST ?? "0.0.0.0";
@@ -35,8 +36,14 @@ const fastify = Fastify({
   },
 });
 
+fastify.register(fastifyCookie)
+
 fastify.register(jwt, {
   secret: process.env.JWT_SECRET!,
+  cookie: {
+    cookieName: "bellmont.token",
+    signed: false,
+  }
 });
 
 fastify.register(cors, {

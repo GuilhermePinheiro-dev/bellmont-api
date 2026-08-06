@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import Fastify from "fastify";
+import fastifyCookie from "@fastify/cookie";
 import jwt from "@fastify/jwt";
 import authRoutes from "../src/routes/auth.routes";
 import { loginUser, registerUser } from "../src/services/auth.service";
@@ -27,6 +28,7 @@ describe("auth routes", () => {
     } as any);
 
     const app = Fastify();
+    app.register(fastifyCookie);
     app.register(jwt, { secret: "test-secret" });
     app.register(authRoutes, { prefix: "/auth" });
 
@@ -64,6 +66,7 @@ describe("auth routes", () => {
     } as any);
 
     const app = Fastify();
+    app.register(fastifyCookie);
     app.register(jwt, { secret: "test-secret" });
     app.register(authRoutes, { prefix: "/auth" });
 
@@ -85,5 +88,28 @@ describe("auth routes", () => {
     const body = response.json();
     expect(body).toHaveProperty("token");
     expect(body.user.email).toBe("ada@example.com");
+  });
+
+  it("returns 409 when the credentials are invalid", async () => {
+    mockedLoginUser.mockResolvedValue(null);
+
+    const app = Fastify();
+    app.register(fastifyCookie);
+    app.register(jwt, { secret: "test-secret" });
+    app.register(authRoutes, { prefix: "/auth" });
+
+    const response = await app.inject({
+      method: "POST",
+      url: "/auth/login",
+      payload: {
+        email: "ada@example.com",
+        password: "wrong-password",
+      },
+    });
+
+    expect(response.statusCode).toBe(409);
+    expect(response.json()).toEqual({
+      message: "As credenciais estão incorretas.",
+    });
   });
 });

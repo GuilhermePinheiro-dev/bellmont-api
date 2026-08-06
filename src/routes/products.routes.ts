@@ -6,12 +6,10 @@ import {
   listProducts,
   updateExistingProduct,
 } from "../controllers/products.controller";
-import { authenticate } from "../middlewares/auth.middlewares";
 import { requireAdmin } from "../middlewares/admin.middleware";
 import { CreateProduct, UpdateProduct } from "../types";
 
 export default async function productRoutes(fastify: FastifyInstance) {
-  fastify.addHook("onRequest", authenticate);
   fastify.get(
     "/",
     {

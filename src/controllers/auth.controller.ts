@@ -21,20 +21,37 @@ export const login = async (
   request: FastifyRequest<{ Body: AuthRequest }>,
   reply: FastifyReply,
 ) => {
-  const validation = loginSchema.parse(request.body as AuthRequest);
+  try {
+    const validation = loginSchema.parse(request.body as AuthRequest);
+    const user = await loginUser(validation);
 
-  const user = await loginUser(validation);
+    if (!user) {
+      return reply.status(409).send({
+        message: "As credenciais estão incorretas.",
+      });
+    }
 
-  const token = request.server.jwt.sign({ userId: user.id });
-  reply.status(200).send({
-    user,
-    token,
-  });
+    const token = request.server.jwt.sign({ userId: user.id });
+
+    reply.setCookie("bellmont.token", token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+      path: "/",
+      maxAge: 60 * 60 * 24,
+    });
+
+    return reply.status(200).send({ user, token });
+  } catch (error) {
+    if (error instanceof Error && "issues" in error) {
+      return reply.status(400).send({ message: "Dados inválidos." });
+    }
+
+    console.error(error);
+    return reply.status(500).send({ message: "Erro interno do servidor" });
+  }
 };
 
-export const profile = async (
-  request: FastifyRequest,
-  reply: FastifyReply,
-) => {
-  return reply.send((request as any).user);
+export const profile = async (request: FastifyRequest, reply: FastifyReply) => {
+  return reply.status(200).send((request as any).user);
 };

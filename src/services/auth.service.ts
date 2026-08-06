@@ -36,17 +36,12 @@ export const loginUser = async (data: AuthRequest) => {
     where: { email: data.email },
   });
 
-  if (!user) {
-    throw new Error("Credenciais inválidas.");
-  }
+  if (!user) return null;
 
   const isValidPassword = await bcrypt.compare(data.password, user.password);
 
-  if (!isValidPassword) {
-    throw new Error("Senha inválida.");
-  }
+  if (!isValidPassword) return null;
 
-  const { password, ...userWithoutPassord } = user;
-
-  return userWithoutPassord;
+  const { password, ...userWithoutPassword } = user;
+  return userWithoutPassword;
 };
