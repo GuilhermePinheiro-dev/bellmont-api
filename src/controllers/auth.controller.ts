@@ -1,5 +1,9 @@
 import { FastifyReply, FastifyRequest } from "fastify";
-import { registerUser, loginUser } from "../services/auth.service";
+import {
+  registerUser,
+  loginUser,
+  loginWithGoogle,
+} from "../services/auth.service";
 import { AuthRequest, RegisterRequest } from "../types";
 import { loginSchema, registerSchema } from "../utils/validators";
 
@@ -54,4 +58,31 @@ export const login = async (
 
 export const profile = async (request: FastifyRequest, reply: FastifyReply) => {
   return reply.status(200).send((request as any).user);
+};
+
+export const googleLogin = async (
+  request: FastifyRequest<{ Body: { credential: string } }>,
+  reply: FastifyReply,
+) => {
+  const { credential } = request.body;
+
+  if (!credential) {
+    reply.status(400).send({ message: "Credencial do Google é obrigatória " });
+    return;
+  }
+
+  const user = await loginWithGoogle(credential, reply);
+
+  if (!user) return;
+
+  const token = request.server.jwt.sign({ userId: user.id });
+
+  reply.setCookie("Bellmont.token", token, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "lax",
+    path: "/",
+    maxAge: 60 * 60 * 24,
+  });
+  reply.status(200).send({ user });
 };
