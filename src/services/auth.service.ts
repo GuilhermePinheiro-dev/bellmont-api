@@ -81,6 +81,9 @@ export const loginWithGoogle = async (credential: string, reply: FastifyReply) =
     });
 
     const { password, ...userWithoutPassword } = user;
-    return userWithoutPassword
+    return userWithoutPassword;
   }
+
+  const { password, ...userWithoutPassword } = user;
+  return userWithoutPassword;
 };

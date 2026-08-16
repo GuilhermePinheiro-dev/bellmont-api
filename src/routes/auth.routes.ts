@@ -4,6 +4,7 @@ import {
   login,
   profile,
   register,
+  signOut,
 } from "../controllers/auth.controller";
 import { authenticate } from "../middlewares/auth.middlewares";
 
@@ -101,5 +102,17 @@ export default async function authRoutes(fastify: FastifyInstance) {
       },
     },
     googleLogin,
+  );
+  fastify.post(
+    "/signout",
+    {
+      preHandler: [authenticate],
+      schema: {
+        tags: ["Auth"],
+        description: "Desloga o usuário e remove o cookie de autenticação",
+        security: [{ bearerAuth: [] }],
+      },
+    },
+    signOut,
   );
 }

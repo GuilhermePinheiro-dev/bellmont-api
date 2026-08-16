@@ -53,6 +53,11 @@ fastify.register(cors, {
 
 fastify.register(helmet, {
   contentSecurityPolicy: false,
+  // O Google Identity Services conclui o login em um popup e usa postMessage
+  // para comunicar o resultado à janela que o abriu.
+  crossOriginOpenerPolicy: {
+    policy: "same-origin-allow-popups",
+  },
 });
 
 fastify.register(csrf, {

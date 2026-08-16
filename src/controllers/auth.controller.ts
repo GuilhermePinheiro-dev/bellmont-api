@@ -77,7 +77,7 @@ export const googleLogin = async (
 
   const token = request.server.jwt.sign({ userId: user.id });
 
-  reply.setCookie("Bellmont.token", token, {
+  reply.setCookie("bellmont.token", token, {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
     sameSite: "lax",
@@ -86,3 +86,14 @@ export const googleLogin = async (
   });
   reply.status(200).send({ user });
 };
+
+export const signOut = async (request: FastifyRequest, reply: FastifyReply) => {
+  reply.clearCookie("bellmont.token", {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "lax",
+    path: "/",
+  })
+
+  reply.status(200).send({ message: "Usuário deslogado com sucesso!"})
+}
