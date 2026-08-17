@@ -4,13 +4,23 @@ import { AuthRequest, RegisterRequest } from "../types";
 import bcrypt from "bcrypt";
 import { OAuth2Client } from "google-auth-library";
 
-export const registerUser = async (payload: RegisterRequest) => {
-  const existingUser = await prisma.user.findUnique({
-    where: { email: payload.email },
+export const registerUser = async (
+  payload: RegisterRequest,
+  reply: FastifyReply,
+) => {
+  const existingUser = await prisma.user.findFirst({
+    where: {
+      OR: [{ email: payload.email }, { cpf: payload.cpf }],
+    },
   });
 
   if (existingUser) {
-    throw new Error("Email já cadastrado.");
+    if(existingUser.email === payload.email){
+      return reply.status(409).send({ message: "Email já cadastrado" });
+    }
+    if(existingUser.cpf === payload.cpf){
+      return reply.status(409).send({ message: "CPF já cadastrado" });
+    }
   }
 
   const hasedPassword = await bcrypt.hash(payload.password, 10);
@@ -50,7 +60,10 @@ export const loginUser = async (data: AuthRequest) => {
 
 const googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
-export const loginWithGoogle = async (credential: string, reply: FastifyReply) => {
+export const loginWithGoogle = async (
+  credential: string,
+  reply: FastifyReply,
+) => {
   const ticket = await googleClient.verifyIdToken({
     idToken: credential,
     audience: process.env.GOOGLE_CLIENT_ID,
