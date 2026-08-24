@@ -272,7 +272,20 @@ export default async function productRoutes(fastify: FastifyInstance) {
           400: {
             description: "Requisição inválida",
             type: "object",
-            properties: { message: { type: "string" } },
+            properties: {
+              message: { type: "string" },
+              errors: {
+                type: "array",
+                items: {
+                  type: "object",
+                  properties: {
+                    field: { type: "string" },
+                    message: { type: "string" },
+                    code: { type: "string" },
+                  },
+                },
+              },
+            },
           },
           401: {
             description: "Não autorizado",

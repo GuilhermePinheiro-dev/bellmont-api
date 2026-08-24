@@ -15,6 +15,20 @@ import {
 import { CreateProduct, ProductFilters, UpdateProduct } from "../types";
 import { generateSlug } from "../utils/slug";
 
+const normalizeProductUpdate = (body: Partial<UpdateProduct>) =>
+  Object.fromEntries(
+    Object.entries(body).filter(([, value]) => {
+      if (typeof value === "string") return value.trim() !== "";
+      if (Array.isArray(value)) {
+        return (
+          value.length > 0 &&
+          value.some((item) => typeof item !== "string" || item.trim() !== "")
+        );
+      }
+      return value !== undefined;
+    }),
+  );
+
 export const listProducts = async (
   request: FastifyRequest<{ Querystring: unknown }>,
   reply: FastifyReply,
@@ -55,9 +69,21 @@ export const updateExistingProduct = async (
   reply: FastifyReply,
 ) => {
   const id = Number(request.params.id);
-  const body = request.body;
+  const body = normalizeProductUpdate(request.body);
 
-  const validate = updateProductSchema.parse(body);
+  const validation = updateProductSchema.safeParse(body);
+
+  if (!validation.success) {
+    return reply.status(400).send({
+      message: "Erro de validação ao atualizar produto",
+      errors: validation.error.issues.map((issue) => ({
+        field: issue.path.length > 0 ? issue.path.join(".") : "body",
+        message: issue.message,
+      })),
+    });
+  }
+
+  const validate = validation.data;
 
   if (validate.name) {
     validate.slug = generateSlug(validate.name);
