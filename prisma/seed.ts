@@ -1,222 +1,170 @@
 import { prisma } from "../src/lib/prisma";
 
 async function main() {
-  console.log("🌱 Iniciando seed de categorias e produtos...");
-
-  // Limpar dados existentes antes de recriar a base inicial
-  await prisma.product.deleteMany({});
-  await prisma.category.deleteMany({});
-  console.log("✅ Categorias e produtos anteriores removidos");
-
-  const categories = [
-    {
-      name: "Camisetas",
-      slug: "camisetas",
-      active: true,
-    },
-    {
-      name: "Calças",
-      slug: "calcas",
-      active: true,
-    },
-    {
-      name: "Calçados",
-      slug: "calcados",
-      active: true,
-    },
-    {
-      name: "Acessórios",
-      slug: "acessorios",
-      active: true,
-    },
-    {
-      name: "Moda Externa",
-      slug: "moda-externa",
-      active: true,
-    },
-  ];
-
-  const createdCategories: Record<string, number> = {};
-
-  for (const category of categories) {
-    const createdCategory = await prisma.category.create({
-      data: category,
-    });
-
-    createdCategories[createdCategory.slug] = createdCategory.id;
-    console.log(
-      `✅ Categoria criada: "${createdCategory.name}" (ID: ${createdCategory.id})`,
-    );
-  }
+  console.log("Iniciando seed de produtos...");
 
   const products = [
     {
-      name: "Camiseta Essential Cotton",
-      slug: "camiseta-essential-cotton",
+      name: "Bellmont Noir Essence",
       description:
-        "Camiseta 100% algodão com caimento reto e toque macio para uso diário.",
-      price: 89.9,
-      stock: 120,
-      images: [
-        "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=500&h=500&fit=crop",
-        "https://images.unsplash.com/photo-1576566588028-4147f3842f27?w=500&h=500&fit=crop",
-      ],
-      sizes: ["P", "M", "G", "GG"],
+        "Uma fragrância intensa e sofisticada com notas amadeiradas, couro e âmbar dourado. Criado para homens elegantes e marcantes.",
+      price: 489.9,
+      images: ["/img/product-perfume-1.png"],
+      sizes: ["50ml"],
+      categoryId: 1,
+      slug: "bellmont-noir-essence",
+      stock: 12,
       active: true,
-      categoryId: createdCategories["camisetas"],
+      colors: ["Preto Fosco"],
     },
     {
-      name: "Camiseta Oversized Street",
-      slug: "camiseta-oversized-street",
-      description: "Modelo oversized com visual urbano e tecido encorpado.",
-      price: 109.9,
-      stock: 95,
-      images: [
-        "https://images.unsplash.com/photo-1503341504253-dff4815485f1?w=500&h=500&fit=crop",
-        "https://images.unsplash.com/photo-1483985988355-763728e1935b?w=500&h=500&fit=crop",
-      ],
-      sizes: ["P", "M", "G", "GG"],
+      name: "Bellmont Golden Elixir",
+      description:
+        "Perfume premium com toque cítrico refinado, lavanda francesa e fundo quente de baunilha e musk.",
+      price: 529.9,
+      images: ["/img/product-perfume-2.png"],
+      sizes: ["50ml"],
+      categoryId: 1,
+      slug: "bellmont-golden-elixir",
+      stock: 10,
       active: true,
-      categoryId: createdCategories["camisetas"],
+      colors: ["Dourado Champagne"],
     },
     {
-      name: "Calça Jeans Slim Fit",
-      slug: "calca-jeans-slim-fit",
+      name: "Bellmont Imperial Oud",
       description:
-        "Calça jeans de corte ajustado com acabamento moderno e versátil.",
-      price: 199.9,
-      stock: 80,
-      images: [
-        "https://images.unsplash.com/photo-1542272604-787c62d465d1?w=500&h=500&fit=crop",
-        "https://images.unsplash.com/photo-1541099649105-f69ad21f3246?w=500&h=500&fit=crop",
-      ],
-      sizes: ["38", "40", "42", "44", "46"],
+        "Fragrância luxuosa inspirada no oriente moderno, misturando oud, especiarias nobres e madeira escura.",
+      price: 649.9,
+      images: ["/img/product-perfume-3.png"],
+      sizes: ["100ml"],
+      categoryId: 1,
+      slug: "bellmont-imperial-oud",
+      stock: 8,
       active: true,
-      categoryId: createdCategories["calcas"],
+      colors: ["Marrom Espresso"],
     },
     {
-      name: "Calça Cargo Utility",
-      slug: "calca-cargo-utility",
+      name: "Bellmont Chronos",
       description:
-        "Calça cargo com bolsos funcionais e ajuste confortável para o dia a dia.",
-      price: 229.9,
-      stock: 62,
-      images: [
-        "https://images.unsplash.com/photo-1473966968600-fa801b869a1a?w=500&h=500&fit=crop",
-        "https://images.unsplash.com/photo-1495385794356-15371f348c31?w=500&h=500&fit=crop",
-      ],
-      sizes: ["38", "40", "42", "44", "46"],
+        "Relógio minimalista com caixa premium em aço escovado e pulseira em couro legítimo preto.",
+      price: 1299.9,
+      images: ["/img/product-relogio-1.png"],
+      sizes: ["Único"],
+      categoryId: 2,
+      slug: "bellmont-chronos",
+      stock: 6,
       active: true,
-      categoryId: createdCategories["calcas"],
+      colors: ["Preto Ônix"],
     },
     {
-      name: "Tênis Urban Runner",
-      slug: "tenis-urban-runner",
+      name: "Bellmont Heritage Gold",
       description:
-        "Tênis com sola leve, estilo casual e amortecimento para uso prolongado.",
-      price: 359.9,
-      stock: 44,
-      images: [
-        "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=500&h=500&fit=crop",
-        "https://images.unsplash.com/photo-1460353581641-37baddab0fa2?w=500&h=500&fit=crop",
-      ],
-      sizes: ["38", "39", "40", "41", "42", "43", "44"],
+        "Elegância clássica com acabamento dourado champagne e mostrador sofisticado inspirado na alta relojoaria.",
+      price: 1499.9,
+      images: ["/img/product-relogio-2.png"],
+      sizes: ["Único"],
+      categoryId: 2,
+      slug: "bellmont-heritage-gold",
+      stock: 5,
       active: true,
-      categoryId: createdCategories["calcados"],
+      colors: ["Dourado Fosco"],
     },
     {
-      name: "Tênis Sprint Pro",
-      slug: "tenis-sprint-pro",
+      name: "Bellmont Eclipse",
       description:
-        "Tênis esportivo com foco em conforto, estabilidade e performance.",
+        "Design moderno com pulseira metálica premium e detalhes minimalistas para um visual sofisticado.",
+      price: 1799.9,
+      images: ["/img/product-relogio-3.png"],
+      sizes: ["Único"],
+      categoryId: 2,
+      slug: "bellmont-eclipse",
+      stock: 4,
+      active: true,
+      colors: ["Grafite Escuro"],
+    },
+    {
+      name: "Bellmont Royal Ring",
+      description:
+        "Anel sofisticado com acabamento polido e design minimalista inspirado em joias clássicas europeias.",
       price: 389.9,
-      stock: 36,
-      images: [
-        "https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?w=500&h=500&fit=crop",
-        "https://images.unsplash.com/photo-1525966222134-fcfa99b8ae77?w=500&h=500&fit=crop",
-      ],
-      sizes: ["38", "39", "40", "41", "42", "43", "44"],
+      images: ["/img/product-acessorio-1.png"],
+      sizes: ["16", "17", "18"],
+      categoryId: 3,
+      slug: "bellmont-royal-ring",
+      stock: 9,
       active: true,
-      categoryId: createdCategories["calcados"],
+      colors: ["Dourado Premium"],
     },
     {
-      name: "Boné Classic Logo",
-      slug: "bone-classic-logo",
-      description: "Boné ajustável com bordado frontal e visual minimalista.",
-      price: 79.9,
-      stock: 180,
-      images: [
-        "https://images.unsplash.com/photo-1521369909029-2afed882baee?w=500&h=500&fit=crop",
-        "https://images.unsplash.com/photo-1517841905240-472988babdf9?w=500&h=500&fit=crop",
-      ],
-      sizes: ["Único"],
-      active: true,
-      categoryId: createdCategories["acessorios"],
-    },
-    {
-      name: "Mochila Urban Pro",
-      slug: "mochila-urban-pro",
+      name: "Bellmont Signature Chain",
       description:
-        "Mochila com compartimento para notebook e bolsos organizadores internos.",
-      price: 259.9,
-      stock: 70,
-      images: [
-        "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=500&h=500&fit=crop",
-        "https://images.unsplash.com/photo-1495107334309-fcf20504a5ab?w=500&h=500&fit=crop",
-      ],
-      sizes: ["Único"],
+        "Colar refinado com corrente delicada e pingente exclusivo Bellmont para compor um visual luxuoso.",
+      price: 459.9,
+      images: ["/img/product-acessorio-2.png"],
+      sizes: ["45cm"],
+      categoryId: 3,
+      slug: "bellmont-signature-chain",
+      stock: 7,
       active: true,
-      categoryId: createdCategories["acessorios"],
+      colors: ["Ouro Champagne"],
     },
     {
-      name: "Jaqueta Corta-Vento Light",
-      slug: "jaqueta-corta-vento-light",
+      name: "Bellmont Premium Polo",
       description:
-        "Jaqueta leve com proteção contra vento e acabamento resistente à água.",
-      price: 319.9,
-      stock: 52,
-      images: [
-        "https://images.unsplash.com/photo-1523398002811-999ca8dec234?w=500&h=500&fit=crop",
-        "https://images.unsplash.com/photo-1551028719-00167b16ebc5?w=500&h=500&fit=crop",
-      ],
-      sizes: ["P", "M", "G", "GG"],
-      active: true,
-      categoryId: createdCategories["moda-externa"],
-    },
-    {
-      name: "Colete Puffer Urban",
-      slug: "colete-puffer-urban",
-      description:
-        "Colete acolchoado para sobreposição em dias frios com visual moderno.",
+        "Polo premium confeccionada em tecido macio de alta qualidade com caimento elegante e minimalista.",
       price: 279.9,
-      stock: 39,
-      images: [
-        "https://images.unsplash.com/photo-1548883354-94bcfe321cbb?w=500&h=500&fit=crop",
-        "https://images.unsplash.com/photo-1512436991641-6745cdb1723f?w=500&h=500&fit=crop",
-      ],
-      sizes: ["P", "M", "G", "GG"],
+      images: ["/img/product-roupa-1.png"],
+      sizes: ["P", "M", "G"],
+      categoryId: 4,
+      slug: "bellmont-premium-polo",
+      stock: 11,
       active: true,
-      categoryId: createdCategories["moda-externa"],
+      colors: ["Marrom Café"],
+    },
+    {
+      name: "Bellmont Essential Shirt",
+      description:
+        "Camisa sofisticada com modelagem moderna e tecido leve, perfeita para ocasiões elegantes e casuais.",
+      price: 349.9,
+      images: ["/img/product-roupa-2.png"],
+      sizes: ["P", "M", "G"],
+      categoryId: 4,
+      slug: "bellmont-essential-shirt",
+      stock: 10,
+      active: true,
+      colors: ["Bege Areia"],
     },
   ];
 
+  const productSlugs = products.map((product) => product.slug);
+
+  const removedProducts = await prisma.product.deleteMany({
+    where: {
+      slug: { notIn: productSlugs },
+      orderItems: { none: {} },
+    },
+  });
+  console.log(
+    `${removedProducts.count} produto(s) antigo(s) sem pedidos removido(s); produtos vinculados a pedidos foram preservados`,
+  );
+
   for (const product of products) {
-    const createdProduct = await prisma.product.create({
-      data: product,
+    const savedProduct = await prisma.product.upsert({
+      where: { slug: product.slug },
+      update: product,
+      create: product,
     });
-    console.log(
-      `✅ Produto criado: "${createdProduct.name}" (ID: ${createdProduct.id})`,
-    );
+    console.log(`Produto salvo: "${savedProduct.name}" (ID: ${savedProduct.id})`);
   }
 
   console.log(
-    "🎉 Seed concluído com sucesso! 5 categorias e 10 produtos foram criados.",
+    "Seed concluído com sucesso! Produtos do mock foram sincronizados; nenhuma categoria, pedido ou item de pedido foi alterado.",
   );
 }
 
 main()
-  .catch((e) => {
-    console.error("❌ Erro ao executar seed:", e);
+  .catch((error) => {
+    console.error("Erro ao executar seed:", error);
     process.exit(1);
   })
   .finally(async () => {

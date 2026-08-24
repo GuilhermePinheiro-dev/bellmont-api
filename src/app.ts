@@ -12,6 +12,8 @@ import orderRoutes from "./routes/orders.routes";
 import { errorHandler } from "./middlewares/error.middleware";
 import csrf from "@fastify/csrf-protection"
 import fastifyCookie from "@fastify/cookie";
+import fastifyStatic from "@fastify/static";
+import path from "node:path";
 
 const PORT = parseInt(process.env.PORT ?? "3000");
 const HOST = process.env.HOST ?? "0.0.0.0";
@@ -63,6 +65,12 @@ fastify.register(helmet, {
 fastify.register(csrf, {
   cookieOpts: { signed: true}
 })
+
+fastify.register(fastifyStatic, {
+  root: path.join(process.cwd(), "src", "img"),
+  prefix: "/img/",
+  decorateReply: false,
+});
 
 fastify.register(swagger, {
   openapi: {
