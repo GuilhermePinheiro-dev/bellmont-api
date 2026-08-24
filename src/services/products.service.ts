@@ -1,4 +1,3 @@
-import { sl } from "zod/v4/locales";
 import { prisma } from "../lib/prisma";
 import { CreateProduct, ProductFilters, UpdateProduct } from "../types";
 

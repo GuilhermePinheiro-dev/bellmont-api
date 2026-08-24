@@ -119,6 +119,10 @@ export default async function productRoutes(fastify: FastifyInstance) {
                 type: "array",
                 items: { type: "string" },
               },
+              colors: {
+                type: "array",
+                items: { type: "string" },
+              },
               active: { type: "boolean" },
               createdAt: { type: "string", format: "date-time" },
               updatedAt: { type: "string", format: "date-time" },
