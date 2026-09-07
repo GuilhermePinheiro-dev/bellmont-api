@@ -1,6 +1,6 @@
 import { prisma } from "../lib/prisma";
-import { Prisma } from "../generated/prisma/client";
-import { OrderFilters, OrderStatus, SaveOrder } from "../types";
+import { OrderStatus, Prisma } from "../generated/prisma/client";
+import { CreateOrder, OrderFilters } from "../types";
 
 const orderInclude = {
   items: {
@@ -19,7 +19,7 @@ const orderInclude = {
   },
 };
 
-const normalizeItems = (items: SaveOrder["items"]) => {
+const normalizeItems = (items: CreateOrder["items"]) => {
   const groupedItems = new Map<number, number>();
 
   for (const item of items) {
@@ -35,10 +35,10 @@ const normalizeItems = (items: SaveOrder["items"]) => {
   }));
 };
 
-export const createOrder = async (data: SaveOrder) => {
+export const createOrder = async (data: CreateOrder) => {
   const items = normalizeItems(data.items);
   const productIds = items.map((item) => item.productId);
-  const shipping = data.shipping ?? 0;
+  const shippingCost = data.shippingCost ?? 0;
   const discount = data.discount ?? 0;
 
   return prisma.$transaction(async (tx) => {
@@ -91,8 +91,11 @@ export const createOrder = async (data: SaveOrder) => {
       };
     });
 
-    const subtotal = orderItems.reduce((total, item) => total + item.subtotal, 0);
-    const total = subtotal + shipping - discount;
+    const subtotal = orderItems.reduce(
+      (total, item) => total + item.subtotal,
+      0,
+    );
+    const total = subtotal + shippingCost - discount;
 
     if (total < 0) {
       throw new Error("Total do pedido não pode ser negativo");
@@ -117,27 +120,31 @@ export const createOrder = async (data: SaveOrder) => {
       }
     }
 
-    return tx.order.create({
+    const newOrder = await tx.order.create({
       data: {
-        userId: data.userId,
+        userId: user.id,
         subtotal,
-        shipping,
+        shippingCost,
         discount,
         total,
-        shippingAddress: data.shippingAddress as unknown as Prisma.InputJsonObject,
+        status: OrderStatus.PENDING,
+        shippingAddress: JSON.stringify(data.shippingAddress),
+        paymentMethod: data.paymentMethod,
         items: {
           create: orderItems,
         },
       },
       include: orderInclude,
     });
+    return newOrder;
   });
 };
 
 export const getOrders = async (userId: number, filters: OrderFilters) => {
   const page = filters.page ?? 1;
   const limit = filters.limit ?? 10;
-  const sortOrderValue = filters.sortOrder?.toLowerCase() === "desc" ? "desc" : "asc";
+  const sortOrderValue =
+    filters.sortOrder?.toLowerCase() === "desc" ? "desc" : "asc";
   const sortByMap: Record<string, "total" | "createdAt" | "status"> = {
     total: "total",
     createdAt: "createdAt",

@@ -58,19 +58,19 @@ model Category {
 }
 
 model Order {
-  id            Int           @id @default(autoincrement())
-  userId        Int
-  user          User          @relation(fields: [userId], references: [id])
-  status        OrderStatus   @default(PENDING)
-  paymentStatus PaymentStatus @default(PENDING)
-  subtotal      Decimal       @default(0) @db.Decimal(10, 2)
-  shipping      Decimal       @default(0) @db.Decimal(10, 2)
-  discount      Decimal       @default(0) @db.Decimal(10, 2)
-  total         Decimal       @default(0) @db.Decimal(10, 2)
+  id              Int           @id @default(autoincrement())
+  userId          Int
+  user            User          @relation(fields: [userId], references: [id])
+  status          OrderStatus   @default(PENDING)
+  paymentStatus   PaymentStatus @default(PENDING)
+  subtotal        Decimal       @default(0) @db.Decimal(10, 2)
+  shippingCost    Decimal       @default(0) @db.Decimal(10, 2)
+  discount        Decimal       @default(0) @db.Decimal(10, 2)
+  total           Decimal       @default(0) @db.Decimal(10, 2)
   shippingAddress Json?
-  items         OrderItem[]
-  createdAt     DateTime      @default(now())
-  updatedAt     DateTime      @updatedAt
+  items           OrderItem[]
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
 
   @@index([userId])
   @@index([status])

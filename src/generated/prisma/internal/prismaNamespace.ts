@@ -871,7 +871,7 @@ export const OrderScalarFieldEnum = {
   status: 'status',
   paymentStatus: 'paymentStatus',
   subtotal: 'subtotal',
-  shipping: 'shipping',
+  shippingCost: 'shippingCost',
   discount: 'discount',
   total: 'total',
   shippingAddress: 'shippingAddress',

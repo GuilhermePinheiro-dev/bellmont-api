@@ -113,6 +113,7 @@ export const deleteCategorySchema = z.object({
   id: z.number().int().min(1, "ID inválido"),
 });
 export const createOrderSchema = z.object({
+  userId: z.number().int().optional(),
   items: z
     .array(
       z.object({
@@ -130,7 +131,7 @@ export const createOrderSchema = z.object({
   shippingAddress: z.object({
     cep: z
       .string()
-      .regex(/^\d{8}$/, "CEP deve conter 8 dígitos"),
+      .min(8, "CEP deve ter 8 caracteres"),
     street: z.string().min(1, "Rua/Avenida é obrigatória"),
     number: z.string().min(1, "Número é obrigatório"),
     complement: z.string().optional(),
@@ -147,6 +148,8 @@ export const createOrderSchema = z.object({
   discount: z
     .preprocess((value) => parseNumber(value), z.number().nonnegative())
     .optional(),
+  paymentMethod: z.string().min(1, "Metodo de pagamento é obrigatório"),
+  shippingCost: z.number().nonnegative("O frete deve ser positivo")
 });
 
 export const orderIdSchema = z.object({

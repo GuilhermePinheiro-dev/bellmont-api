@@ -14,6 +14,7 @@ import csrf from "@fastify/csrf-protection"
 import fastifyCookie from "@fastify/cookie";
 import fastifyStatic from "@fastify/static";
 import path from "node:path";
+import stripeRoutes from "./routes/stripe.routes";
 
 const PORT = parseInt(process.env.PORT ?? "3000");
 const HOST = process.env.HOST ?? "0.0.0.0";
@@ -110,6 +111,7 @@ fastify.register(productRoutes, { prefix: "/products" });
 fastify.register(categoryRoutes, { prefix: "/categories" });
 fastify.register(authRoutes, { prefix: "/auth" });
 fastify.register(orderRoutes, { prefix: "/orders" });
+fastify.register(stripeRoutes, {prefix: "/stripe"})
 
 fastify.get("/", function (request, reply) {
   reply.send({ hello: "world" });

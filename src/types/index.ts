@@ -93,12 +93,10 @@ export interface ShippingAddress {
 export interface CreateOrder {
   items: CreateOrderItem[];
   shippingAddress: ShippingAddress;
-  shipping?: number;
+  shippingCost?: number;
   discount?: number;
-}
-
-export interface SaveOrder extends CreateOrder {
-  userId: number;
+  paymentMethod: string;
+  userId?: number;
 }
 
 export interface UpdateOrderStatus {
