@@ -129,18 +129,13 @@ export const createOrderSchema = z.object({
     )
     .min(1, "Pedido deve ter ao menos um item"),
   shippingAddress: z.object({
-    cep: z
-      .string()
-      .min(8, "CEP deve ter 8 caracteres"),
+    cep: z.string().min(8, "CEP deve ter 8 caracteres"),
     street: z.string().min(1, "Rua/Avenida é obrigatória"),
-    number: z.string().min(1, "Número é obrigatório"),
+    number: z.coerce.number().min(1, "Número é obrigatório"),
     complement: z.string().optional(),
     neighborhood: z.string().min(1, "Bairro é obrigatório"),
     city: z.string().min(1, "Cidade é obrigatória"),
-    state: z
-      .string()
-      .length(2, "Estado deve conter a UF com 2 caracteres"),
-    country: z.string().default("BR"),
+    state: z.string().length(2, "Estado deve conter a UF com 2 caracteres"),
   }),
   shipping: z
     .preprocess((value) => parseNumber(value), z.number().nonnegative())
@@ -149,7 +144,12 @@ export const createOrderSchema = z.object({
     .preprocess((value) => parseNumber(value), z.number().nonnegative())
     .optional(),
   paymentMethod: z.string().min(1, "Metodo de pagamento é obrigatório"),
-  shippingCost: z.number().nonnegative("O frete deve ser positivo")
+  shippingCost: z
+    .preprocess(
+      (value) => parseNumber(value),
+      z.number().nonnegative("O frete deve ser positivo"),
+    )
+    .default(0),
 });
 
 export const orderIdSchema = z.object({
@@ -162,39 +162,40 @@ export const updateOrderStatusSchema = z.object({
   }),
 });
 
-export const orderFiltersSchema = z.object({
-  page: z
-    .preprocess((value) => parseNumber(value), z.number().int().positive())
-    .optional(),
-  limit: z
-    .preprocess((value) => parseNumber(value), z.number().int().positive())
-    .optional(),
-  status: z
-    .enum(["PENDING", "PAID", "SHIPPED", "DELIVERED", "CANCELED"], {
-      message: "Status do pedido inválido",
-    })
-    .optional(),
-  paymentStatus: z
-    .enum(["PENDING", "PAID", "FAILED", "REFUNDED"], {
-      message: "Status de pagamento inválido",
-    })
-    .optional(),
-  totalMin: z
-    .preprocess((value) => parseNumber(value), z.number().nonnegative())
-    .optional(),
-  totalMax: z
-    .preprocess((value) => parseNumber(value), z.number().nonnegative())
-    .optional(),
-  sortBy: z.enum(["total", "createdAt", "status"]).optional(),
-  sortOrder: z.enum(["asc", "desc"]).optional(),
-})
-.refine(
-  (data) =>
-    data.totalMin === undefined ||
-    data.totalMax === undefined ||
-    data.totalMin <= data.totalMax,
-  {
-    message: "totalMin deve ser menor ou igual a totalMax",
-    path: ["totalMin"],
-  },
-);
+export const orderFiltersSchema = z
+  .object({
+    page: z
+      .preprocess((value) => parseNumber(value), z.number().int().positive())
+      .optional(),
+    limit: z
+      .preprocess((value) => parseNumber(value), z.number().int().positive())
+      .optional(),
+    status: z
+      .enum(["PENDING", "PAID", "SHIPPED", "DELIVERED", "CANCELED"], {
+        message: "Status do pedido inválido",
+      })
+      .optional(),
+    paymentStatus: z
+      .enum(["PENDING", "PAID", "FAILED", "REFUNDED"], {
+        message: "Status de pagamento inválido",
+      })
+      .optional(),
+    totalMin: z
+      .preprocess((value) => parseNumber(value), z.number().nonnegative())
+      .optional(),
+    totalMax: z
+      .preprocess((value) => parseNumber(value), z.number().nonnegative())
+      .optional(),
+    sortBy: z.enum(["total", "createdAt", "status"]).optional(),
+    sortOrder: z.enum(["asc", "desc"]).optional(),
+  })
+  .refine(
+    (data) =>
+      data.totalMin === undefined ||
+      data.totalMax === undefined ||
+      data.totalMin <= data.totalMax,
+    {
+      message: "totalMin deve ser menor ou igual a totalMax",
+      path: ["totalMin"],
+    },
+  );

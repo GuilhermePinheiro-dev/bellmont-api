@@ -82,12 +82,11 @@ export interface CreateOrderItem {
 export interface ShippingAddress {
   cep: string;
   street: string;
-  number: string;
+  number: number;
   complement?: string;
   neighborhood: string;
   city: string;
   state: string;
-  country?: string;
 }
 
 export interface CreateOrder {

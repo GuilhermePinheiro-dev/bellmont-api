@@ -27,15 +27,17 @@ export const createStripeCheckoutService = async ({
     payment_method_types: ["card"],
     mode: "payment",
     line_items: products.map((product) => ({
-        price_data: {
-            currency: "brl",
-            unit_amount: Math.round(product.unitPrice * 100),
-            product_data: {
-                name: product.name
-            }
+      price_data: {
+        currency: "brl",
+        unit_amount: Math.round(product.unitPrice * 100),
+        product_data: {
+          name: product.name,
         },
-        quantity: product.quantity
+      },
+      quantity: product.quantity,
     })),
+    success_url: "http://localhost:5173/success",
+    cancel_url: "http://localhost:5173/cancel",
   });
 
   return {

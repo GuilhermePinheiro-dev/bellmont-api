@@ -5,6 +5,8 @@ import { createOrder } from "../services/orders.service";
 
 export class StripeController {
   async createCheckoutSession(request: FastifyRequest, reply: FastifyReply) {
+    console.log(request.body);
+    
     const { items, shippingAddress, paymentMethod, userId, shippingCost } =
       createOrderSchema.parse(request.body);
 
@@ -15,6 +17,8 @@ export class StripeController {
       userId,
       shippingCost,
     });
+
+    console.log(order);
 
     const products = order.items.map((item) => ({
       id: item.product.id,
